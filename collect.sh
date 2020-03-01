@@ -21,3 +21,6 @@ cp ~/.zshrc ./
 # copy p10k config
 cp ~/.p10k.zsh ./
 
+# copy custom scripts
+cp ~/.config/custom/* ./.config/custom/
+

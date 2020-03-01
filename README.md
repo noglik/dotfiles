@@ -8,3 +8,7 @@ This is configurations for usefull applications
 - i3-gaps
 - polybar???
 
+## Coc plugins
+Install this plugins with :CocInstall
+'coc-jsonc'
+'coc-tsserver'

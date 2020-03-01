@@ -15,3 +15,9 @@ cp ~/.config/nvim/coc-settings.json ./.config/nvim/
 # copy tmux config
 cp ~/.tmux.conf ./
 
+# copy zsh config
+cp ~/.zshrc ./
+
+# copy p10k config
+cp ~/.p10k.zsh ./
+

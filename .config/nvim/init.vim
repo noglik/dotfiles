@@ -18,6 +18,27 @@ set autoindent
 set copyindent      " copy indent from the previous line
 " }}} Spaces & Tabs
 
+" If split in given direction exists - jump, else create new split
+function! JumpOrOpenNewSplit(key, cmd, fzf) " {{{
+  let current_window = winnr()
+  execute 'wincmd' a:key
+  if current_window == winnr()
+    execute a:cmd
+    if a:fzf
+      Files
+    endif
+  else
+    if a:fzf
+      Files
+    endif
+  endif
+endfunction " }}}
+
+nnoremap <silent> <Leader>hh :call JumpOrOpenNewSplit('h', ':leftabove vsplit', 0)<CR>
+nnoremap <silent> <Leader>ll :call JumpOrOpenNewSplit('l', ':rightbelow vsplit', 0)<CR>
+nnoremap <silent> <Leader>kk :call JumpOrOpenNewSplit('k', ':leftabove split', 0)<CR>
+nnoremap <silent> <Leader>jj :call JumpOrOpenNewSplit('j', ':rightbelow split', 0)<CR>
+
 "-----------------------------
 " Plugins
 call plug#begin(stdpath('data').'/plugged')
@@ -30,7 +51,8 @@ Plug 'vim-airline/vim-airline-themes'
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
-Plug 'junegunn/fzf'
+Plug 'junegunn/fzf', { 'do': './install --bin' }
+Plug 'junegunn/fzf.vim'
 Plug 'scrooloose/nerdtree'
 
 Plug 'fatih/vim-go'
@@ -60,8 +82,8 @@ let g:airline_powerline_fonts = 1
 
 "-----------------------------
 " FZF
-nnoremap <silent> <leader>p :FZF <cr>
-nnoremap <silent> <leader>P :FZF ~<cr>
+nnoremap <c-p> :Files<cr>
+nnoremap <c-s> :Ag<cr>
 
 "-----------------------------
 " COC

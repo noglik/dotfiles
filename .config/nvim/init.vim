@@ -7,7 +7,7 @@ endif
 syntax on
 
 " Leader & Mappings {{{
-let mapleader=" "   " leader is comma
+let mapleader=" "   " leader is space
 
 " Spaces & Tabs {{{
 set tabstop=4       " number of visual spaces per TAB
@@ -51,11 +51,11 @@ Plug 'vim-airline/vim-airline-themes'
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
-Plug 'junegunn/fzf', { 'do': './install --bin' }
-Plug 'junegunn/fzf.vim'
-Plug 'scrooloose/nerdtree'
-
 Plug 'fatih/vim-go'
+
+Plug 'liuchengxu/vim-clap'
+
+Plug 'rafaqz/ranger.vim'
 call plug#end()
 
 "-----------------------------
@@ -81,9 +81,25 @@ let g:airline_powerline_fonts = 1
 
 
 "-----------------------------
-" FZF
-nnoremap <c-p> :Files<cr>
-nnoremap <c-s> :Ag<cr>
+" Ranger
+let g:ranger_replace_netrw = 1 " open ranger when vim open a directory
+let g:ranger_terminal = 'alacritty'
+map <leader>rr :RangerEdit<cr>
+map <leader>rv :RangerVSplit<cr>
+map <leader>rs :RangerSplit<cr>
+map <leader>rt :RangerTab<cr>
+map <leader>ri :RangerInsert<cr>
+map <leader>ra :RangerAppend<cr>
+map <leader>rc :set operatorfunc=RangerChangeOperator<cr>g@
+map <leader>rd :RangerCD<cr>
+map <leader>rld :RangerLCD<cr>
+
+
+"-----------------------------
+" Clap
+map <leader>pp :Clap<cr>
+map <leader>pf :Clap files<cr>
+map <leader>ps :Clap grep<cr>
 
 "-----------------------------
 " COC
@@ -216,4 +232,6 @@ nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list
 nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
 
+" Coc go autoimport
+autocmd BufWritePre *.go :call CocAction('runCommand', 'editor.action.organizeImport')
 

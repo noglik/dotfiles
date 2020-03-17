@@ -145,7 +145,6 @@ bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcu
 mode "resize" {
         # These bindings trigger as soon as you enter the resize mode
 
-        # Pressing left will shrink the window’s width.
         # Pressing right will grow the window’s width.
         # Pressing up will shrink the window’s height.
         # Pressing down will grow the window’s height.
@@ -186,23 +185,23 @@ bindsym XF86AudioMute exec --no-startup-id "pactl set-sink-mute @DEFAULT_SINK@ t
 bindsym XF86MonBrightnessUp exec ~/.config/custom/increase_brightness.sh
 bindsym XF86MonBrightnessDown exec ~/.config/custom/decrease_brightness.sh
 
+# Change keyboard layout
+exec_always --no-startup-id "setxkbmap -model pc105 -layout us,ru -variant qwerty -option grp:win_space_toggle"
+# Map CapsLock to Escape
+exec_always --no-startup-id "xmodmap -e 'clear Lock' -e 'keycode 0x42 = Escape'"
+
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
-bar {
-	position top
-	font pango:Fira Code 16
-        status_command i3status
-}
+#bar {
+	# position top
+	# font pango:Fira Code 16
+    #status_command i3status
+#}
 
 # polybar
-# exec_always --no-startup-id $HOME/.config/polybar/launch.sh
+exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 
 exec --no-startup-id /usr/bin/xrandr --dpi 180
 exec --no-startup-id feh --bg-scale $HOME/Pictures/small_memory.jpg
-exec --no-startup-id xautolock -time 10 -locker 'convert ~/Pictures/fox_in_the_forest.jpeg RGB:- | i3lock --raw 3840x2160:rgb --image /dev/stdin'
-
-# Change keyboard layout
-exec_always "setxkbmap -model pc105 -layout us,ru -variant qwerty -option grp:win_space_toggle"
-# Map CapsLock to Escape
-exec_always "xmodmap -e 'clear Lock' -e 'keycode 0x42 = Escape'"
+exec --no-startup-id xidlehook --not-when-fullscreen --not-when-audio --timer 300 'convert ~/Pictures/fox_in_the_forest.jpeg RGB:- | i3lock --raw 3840x2160:rgb -corners +00- --image /dev/stdin'
 

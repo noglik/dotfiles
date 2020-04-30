@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-export GDK_SCALE=2
+export GDK_SCALE=1.8

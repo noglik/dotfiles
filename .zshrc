@@ -78,6 +78,11 @@ source $ZSH/oh-my-zsh.sh
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
+# android
+export ANDROID_HOME="$HOME/android"
+export ANDROID_SDK_ROOT="$HOME/android"
+export PATH="$PATH:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin"
+
 export PATH="$PATH:/home/noglik/flutter/bin"
 export PATH="$PATH:/home/noglik/go/bin"
 export PATH="$PATH:/usr/bin/elixir"

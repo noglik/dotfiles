@@ -10,5 +10,6 @@
 				"go"
 			]
 		}
-	}
+	},
+	"coc.preferences.formatOnSaveFiletypes": ["dart"]
 }

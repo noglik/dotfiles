@@ -56,6 +56,8 @@ Plug 'fatih/vim-go'
 Plug 'liuchengxu/vim-clap'
 
 Plug 'rafaqz/ranger.vim'
+
+Plug 'tpope/vim-fugitive'
 call plug#end()
 
 "-----------------------------

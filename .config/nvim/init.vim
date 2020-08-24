@@ -34,15 +34,16 @@ function! JumpOrOpenNewSplit(key, cmd, fzf) " {{{
   endif
 endfunction " }}}
 
-nnoremap <silent> <Leader>hh :call JumpOrOpenNewSplit('h', ':leftabove vsplit', 0)<CR>
-nnoremap <silent> <Leader>ll :call JumpOrOpenNewSplit('l', ':rightbelow vsplit', 0)<CR>
-nnoremap <silent> <Leader>kk :call JumpOrOpenNewSplit('k', ':leftabove split', 0)<CR>
-nnoremap <silent> <Leader>jj :call JumpOrOpenNewSplit('j', ':rightbelow split', 0)<CR>
+" nnoremap <silent> <Leader>hh :call JumpOrOpenNewSplit('h', ':leftabove vsplit', 0)<CR>
+" nnoremap <silent> <Leader>ll :call JumpOrOpenNewSplit('l', ':rightbelow vsplit', 0)<CR>
+" nnoremap <silent> <Leader>kk :call JumpOrOpenNewSplit('k', ':leftabove split', 0)<CR>
+" nnoremap <silent> <Leader>jj :call JumpOrOpenNewSplit('j', ':rightbelow split', 0)<CR>
 
 "-----------------------------
 " Plugins
 call plug#begin(stdpath('data').'/plugged')
 Plug 'joshdick/onedark.vim'
+Plug 'arcticicestudio/nord-vim'
 
 Plug 'sheerun/vim-polyglot'
 
@@ -50,11 +51,15 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'jiangmiao/auto-pairs'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-surround'
 
 Plug 'fatih/vim-go'
+Plug 'jalvesaq/Nvim-R', {'branch': 'stable'}
+Plug 'lervag/vimtex'
 
 Plug 'liuchengxu/vim-clap'
-
 Plug 'rafaqz/ranger.vim'
 
 Plug 'tpope/vim-fugitive'
@@ -70,11 +75,12 @@ if (has("termguicolors"))
 	set termguicolors
 endif
 
-let g:onedark_termcolors=16
+let g:onedark_termcolors=256
+
+highlight Normal ctermbg=NONE
+highlight Comment cterm=italic gui=italic
 
 colorscheme onedark
-hi Normal guibg=NONE ctermbg=NONE
-highlight Comment cterm=italic gui=italic
 
 "-----------------------------
 " AirLine
@@ -83,18 +89,22 @@ let g:airline_powerline_fonts = 1
 
 
 "-----------------------------
+" Vimtex
+let g:vimtex_view_method = 'zathura'
+
+"-----------------------------
 " Ranger
 let g:ranger_replace_netrw = 1 " open ranger when vim open a directory
 let g:ranger_terminal = 'alacritty'
-map <leader>rr :RangerEdit<cr>
-map <leader>rv :RangerVSplit<cr>
-map <leader>rs :RangerSplit<cr>
-map <leader>rt :RangerTab<cr>
-map <leader>ri :RangerInsert<cr>
-map <leader>ra :RangerAppend<cr>
-map <leader>rc :set operatorfunc=RangerChangeOperator<cr>g@
-map <leader>rd :RangerCD<cr>
-map <leader>rld :RangerLCD<cr>
+map <leader>er :RangerEdit<cr>
+map <leader>ev :RangerVSplit<cr>
+map <leader>es :RangerSplit<cr>
+map <leader>et :RangerTab<cr>
+map <leader>ei :RangerInsert<cr>
+map <leader>ea :RangerAppend<cr>
+map <leader>ec :set operatorfunc=RangerChangeOperator<cr>g@
+map <leader>ed :RangerCD<cr>
+map <leader>eld :RangerLCD<cr>
 
 
 "-----------------------------
@@ -102,6 +112,8 @@ map <leader>rld :RangerLCD<cr>
 map <leader>pp :Clap<cr>
 map <leader>pf :Clap files<cr>
 map <leader>ps :Clap grep<cr>
+map <leader>pb :Clap buffers<cr>
+
 
 "-----------------------------
 " COC

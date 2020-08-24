@@ -77,10 +77,10 @@ endif
 
 let g:onedark_termcolors=256
 
-highlight Normal ctermbg=NONE
-highlight Comment cterm=italic gui=italic
-
 colorscheme onedark
+
+" italic comments
+highlight Comment cterm=italic gui=italic
 
 "-----------------------------
 " AirLine

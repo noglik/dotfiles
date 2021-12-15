@@ -1,251 +1,223 @@
-" Autoload
-if empty(glob('~/.config/nvim/autoload/plug.vim'))                                                                                                                                        
-	silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim 
-	autocmd VimEnter * PlugInstall
+" Autoload plug
+if empty(glob('~/.config/nvim/autoload/plug.vim'))                                                                                           
+        silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+        autocmd VimEnter * PlugInstall
 endif
 
-syntax on
-
-" Leader & Mappings {{{
-let mapleader=" "   " leader is space
-
-" Spaces & Tabs {{{
-set tabstop=4       " number of visual spaces per TAB
-set softtabstop=4   " number of spaces in tab when editing
-set shiftwidth=4    " number of spaces to use for autoindent
-set expandtab       " tabs are space
-set autoindent
-set copyindent      " copy indent from the previous line
-" }}} Spaces & Tabs
-
-" If split in given direction exists - jump, else create new split
-function! JumpOrOpenNewSplit(key, cmd, fzf) " {{{
-  let current_window = winnr()
-  execute 'wincmd' a:key
-  if current_window == winnr()
-    execute a:cmd
-    if a:fzf
-      Files
-    endif
-  else
-    if a:fzf
-      Files
-    endif
-  endif
-endfunction " }}}
-
-" nnoremap <silent> <Leader>hh :call JumpOrOpenNewSplit('h', ':leftabove vsplit', 0)<CR>
-" nnoremap <silent> <Leader>ll :call JumpOrOpenNewSplit('l', ':rightbelow vsplit', 0)<CR>
-" nnoremap <silent> <Leader>kk :call JumpOrOpenNewSplit('k', ':leftabove split', 0)<CR>
-" nnoremap <silent> <Leader>jj :call JumpOrOpenNewSplit('j', ':rightbelow split', 0)<CR>
-
-"-----------------------------
-" Plugins
 call plug#begin(stdpath('data').'/plugged')
-Plug 'joshdick/onedark.vim'
-Plug 'arcticicestudio/nord-vim'
 
-Plug 'sheerun/vim-polyglot'
+Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
+Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/cmp-vsnip'
+Plug 'hrsh7th/vim-vsnip'
 
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
 
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'jiangmiao/auto-pairs'
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-surround'
+Plug 'christoomey/vim-tmux-navigator'
 
-Plug 'fatih/vim-go'
-Plug 'jalvesaq/Nvim-R', {'branch': 'stable'}
-Plug 'lervag/vimtex'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'lewis6991/gitsigns.nvim'
 
-Plug 'liuchengxu/vim-clap'
-Plug 'rafaqz/ranger.vim'
+" pretty things
+Plug 'navarasu/onedark.nvim'
 
-Plug 'tpope/vim-fugitive'
-call plug#end()
+call plug#end() 
 
-"-----------------------------
+" ================================
+" general settings
+set nonumber
+  \ nobackup noswapfile
+  \ ignorecase smartcase
+  \ expandtab tabstop=2 shiftwidth=2 softtabstop=2
+  \ backspace=indent,eol,start
+  \ hidden
+  \ completeopt=menu,menuone,noselect
+  \ timeoutlen=1000 ttimeoutlen=0
+  \ encoding=UTF-8
+let mapleader=" " | let maplocalleader=";"
+
+" ================================
+" usefull mappings
+nmap <silent> <leader>rr :source $MYVIMRC<cr>
+nmap <silent> <leader>c :bd<cr>
+nmap <c-c> :set hlsearch!<cr>
+noremap <leader>p "+p
+noremap <leader>y "+y
+
+" ================================
 " One Dark color scheme
-if (has("nvim"))
-	let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-endif
-
-if (has("termguicolors"))
-	set termguicolors
-endif
-
-let g:onedark_termcolors=256
-
+let g:onedark_style = 'warmer'
+let g:onedark_transparent_background = v:true
+let g:onedark_italic_comment = v:true
 colorscheme onedark
 
-" italic comments
-highlight Comment cterm=italic gui=italic
+" ================================
+" Telescope
+lua <<EOF
+  local telescope = require('telescope')
+  local actions = require('telescope.actions')
 
-"-----------------------------
-" AirLine
-" let g:airline#extensions#tabline#enabled = 1
-let g:airline_powerline_fonts = 1
+  telescope.setup {
+    defaults = {
+      file_ignore_patterns = { 'node_modules' },
+      sorting_strategy = 'ascending',
+      layout_config = {
+        prompt_position = 'top',
+      },
+      mappings = {
+        i = {
+          ['<esc>'] = actions.close,
+          ['<c-j>'] = actions.move_selection_next,
+          ['<c-k>'] = actions.move_selection_previous,
+          ['<tab>'] = actions.toggle_selection + actions.move_selection_next,
+          ['<s-tab>'] = actions.toggle_selection + actions.move_selection_previous,
+          ['<cr>'] = actions.select_default,
+          ['<c-v>'] = actions.file_vsplit,
+          ['<c-s>'] = actions.file_split,
+          ['<c-t>'] = actions.file_tab
+        },
+        n = {
+          ['<esc>'] = actions.close,
+          ['<tab>'] = actions.toggle_selection + actions.move_selection_next,
+          ['<s-tab>'] = actions.toggle_selection + actions.move_selection_previous,
+          ['<cr>'] = actions.select_default,
+          ['<c-v>'] = actions.file_vsplit,
+          ['<c-s>'] = actions.file_split,
+          ['<c-t>'] = actions.file_tab
+        }
+      }
+    },
+    pickers = {
+      find_files = {
+        find_command = {'rg', '--files', '--iglob', '!.git', '--hidden'}
+      }
+    }
+  }
 
+  local keymap = {
+    ff = 'find_files',
+    fg = 'live_grep',
+    fb = 'buffers',
+    fs = 'git_status',
+    ft = 'file_browser',
+  }
+  local opts = { noremap = true, silent = true }
+  for key, builtin in pairs(keymap) do
+    local command = '<cmd>lua require(\'telescope.builtin\').' .. builtin .. '()<cr>'
+    vim.api.nvim_set_keymap('n', '<leader>' .. key, command, opts)
+  end
 
-"-----------------------------
-" Vimtex
-let g:vimtex_view_method = 'zathura'
+EOF
 
-"-----------------------------
-" Ranger
-let g:ranger_replace_netrw = 1 " open ranger when vim open a directory
-let g:ranger_terminal = 'alacritty'
-map <leader>er :RangerEdit<cr>
-map <leader>ev :RangerVSplit<cr>
-map <leader>es :RangerSplit<cr>
-map <leader>et :RangerTab<cr>
-map <leader>ei :RangerInsert<cr>
-map <leader>ea :RangerAppend<cr>
-map <leader>ec :set operatorfunc=RangerChangeOperator<cr>g@
-map <leader>ed :RangerCD<cr>
-map <leader>eld :RangerLCD<cr>
+" ================================
+" Gitsigns
+lua <<EOF
+  require('gitsigns').setup {
+    signs = {
+      add          = {hl = 'GitSignsAdd'   , text = '│', numhl='GitSignsAddNr'   , linehl='GitSignsAddLn'},
+      change       = {hl = 'GitSignsChange', text = '│', numhl='GitSignsChangeNr', linehl='GitSignsChangeLn'},
+      delete       = {hl = 'GitSignsDelete', text = '_', numhl='GitSignsDeleteNr', linehl='GitSignsDeleteLn'},
+      topdelete    = {hl = 'GitSignsDelete', text = '‾', numhl='GitSignsDeleteNr', linehl='GitSignsDeleteLn'},
+      changedelete = {hl = 'GitSignsChange', text = '~', numhl='GitSignsChangeNr', linehl='GitSignsChangeLn'},
+    },
+    keymaps = {
+      noremap = true,
+    }
+  }
+EOF
 
+" ================================
+" lsp + completion configuration
+lua <<EOF
+  local nvim_lsp = require('lspconfig')
+  local cmp = require('cmp')
+  
+  cmp.setup({
+    snippet = {
+      expand = function(args)
+        vim.fn["vsnip#anonymous"](args.body)
+      end,
+    },
+    mapping = {
+      ['<tab>'] = cmp.mapping.select_next_item(),
+      ['<c-j>'] = cmp.mapping.select_next_item(),
+      ['<c-k>'] = cmp.mapping.select_prev_item(),
+      ['<c-space>'] = cmp.mapping.complete(),
+      ['<cr>'] = cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Replace }),
+    },
+    sources = cmp.config.sources({
+        { name = 'nvim_lsp' },
+        { name = 'vsnip' },
+      }, {
+        name = 'buffer'
+      }
+    )
+  })
+  
+  local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+  
+  local on_attach = function(client, bufnr)
+    local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+  
+    local opts = { noremap = true, silent = true }
+  
+    buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+    buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+    buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+    buf_set_keymap('n', 'ga', '<cmd>lua require(\'telescope.builtin\').lsp_code_actions(require(\'telescope.themes\').get_cursor())<CR>', opts)
+  end
 
-"-----------------------------
-" Clap
-map <leader>pp :Clap<cr>
-map <leader>pf :Clap files<cr>
-map <leader>ps :Clap grep<cr>
-map <leader>pb :Clap buffers<cr>
+  vim.lsp.handlers['textDocument/publishDiagnostics'] =
+    vim.lsp.with(
+      vim.lsp.diagnostic.on_publish_diagnostics,
+      {
+          virtual_text = {
+            source = 'always',
+            prefix = '»',
+            spacing = 4,
+          },
+          signs = false,
+          update_in_insert = true,
+      }
+    )
 
+  local signs = { Error = ' ', Warn = ' ', Hint = ' ', Info = ' ' }
+  for type, icon in pairs(signs) do
+    local hl = 'DiagnosticSign' .. type
+    vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+  end
 
-"-----------------------------
-" COC
-" if hidden is not set, TextEdit might fail.
-set hidden
+  local servers = { 'tsserver', 'eslint', 'vimls' }
+  for _, lsp in ipairs(servers) do
+    nvim_lsp[lsp].setup {
+      on_attach = on_attach,
+      capabilities = capabilities,
+      flags = {
+        debounce_text_changes = 150,
+      }
+    }
+  end
+EOF
 
-" Some servers have issues with backup files, see #649
-set nobackup
-set nowritebackup
-
-" Better display for messages
-" set cmdheight=2
-
-" You will have bad experience for diagnostic messages when it's default 4000.
-set updatetime=300
-
-" don't give |ins-completion-menu| messages.
-set shortmess+=c
-
-" always show signcolumns
-set signcolumn=yes
-
-" Use tab for trigger completion with characters ahead and navigate.
-" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-" Use <c-space> to trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
-
-" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
-" Coc only does snippet and additional edit on confirm.
-inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-" Or use `complete_info` if your vim support it, like:
-" inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
-
-" Use `[g` and `]g` to navigate diagnostics
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
-
-" Remap keys for gotos
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-
-" Use K to show documentation in preview window
-nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
-  endif
-endfunction
-
-" Highlight symbol under cursor on CursorHold
-autocmd CursorHold * silent call CocActionAsync('highlight')
-
-" Remap for rename current word
-nmap <leader>rn <Plug>(coc-rename)
-
-" Remap for format selected region
-xmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
-
-augroup mygroup
-  autocmd!
-  " Setup formatexpr specified filetype(s).
-  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
-  " Update signature help on jump placeholder
-  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-augroup end
-
-" Remap for do codeAction of selected region, ex: `<leader>aap` for current paragraph
-xmap <leader>a  <Plug>(coc-codeaction-selected)
-nmap <leader>a  <Plug>(coc-codeaction-selected)
-
-" Remap for do codeAction of current line
-nmap <leader>ac  <Plug>(coc-codeaction)
-" Fix autofix problem of current line
-nmap <leader>qf  <Plug>(coc-fix-current)
-
-" Create mappings for function text object, requires document symbols feature of languageserver.
-xmap if <Plug>(coc-funcobj-i)
-xmap af <Plug>(coc-funcobj-a)
-omap if <Plug>(coc-funcobj-i)
-omap af <Plug>(coc-funcobj-a)
-
-" Use <TAB> for select selections ranges, needs server support, like: coc-tsserver, coc-python
-nmap <silent> <TAB> <Plug>(coc-range-select)
-xmap <silent> <TAB> <Plug>(coc-range-select)
-
-" Use `:Format` to format current buffer
-command! -nargs=0 Format :call CocAction('format')
-
-" Use `:Fold` to fold current buffer
-command! -nargs=? Fold :call     CocAction('fold', <f-args>)
-
-" use `:OR` for organize import of current buffer
-command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
-
-" Add status line support, for integration with other plugin, checkout `:h coc-status`
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
-
-" Using CocList
-" Show all diagnostics
-nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
-" Manage extensions
-nnoremap <silent> <space>e  :<C-u>CocList extensions<cr>
-" Show commands
-nnoremap <silent> <space>c  :<C-u>CocList commands<cr>
-" Find symbol of current document
-nnoremap <silent> <space>o  :<C-u>CocList outline<cr>
-" Search workspace symbols
-nnoremap <silent> <space>s  :<C-u>CocList -I symbols<cr>
-" Do default action for next item.
-nnoremap <silent> <space>j  :<C-u>CocNext<CR>
-" Do default action for previous item.
-nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
-" Resume latest coc list
-nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
-
-" Coc go autoimport
-autocmd BufWritePre *.go :call CocAction('runCommand', 'editor.action.organizeImport')
+" ================================
+" treesitter module configuration
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = {"vim", "lua", "typescript"}, -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+  sync_install = false, -- install languages synchronously (only applied to `ensure_installed`)
+  ignore_install = {  }, -- List of parsers to ignore installing
+  highlight = {
+    enable = true,              -- false will disable the whole extension
+    disable = {  },  -- list of language that will be disabled
+    additional_vim_regex_highlighting = true,
+  },
+}
+EOF
+" ================================
 

@@ -6,9 +6,6 @@ cp ~/.config/alacritty/alacritty.yml ./.config/alacritty/
 # copy i3 config files
 cp ~/.config/i3/* ./.config/i3/
 
-# copy polybar config
-cp ~/.config/polybar/* ./.config/polybar/
-
 # copy nvim config
 cp ~/.config/nvim/init.vim ./.config/nvim/
 
@@ -18,6 +15,8 @@ cp ~/.tmux.conf ./
 # copy zsh config
 cp ~/.zshrc ./
 
-# copy custom scripts
-cp ~/.config/custom/* ./.config/custom/
+# copy xinit
+cp ~/.xinitrc ./
 
+# copy xmodmap
+cp ~/.Xmodmap ./

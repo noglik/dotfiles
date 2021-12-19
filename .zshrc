@@ -107,9 +107,6 @@ export LANG=en_US.UTF-8
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias glprt="g log -1 --pretty=%B | pbcopy"
 
-# vault
-export VAULT_ADDR=https://secrets.harver-st.com
-
 # nvm
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm

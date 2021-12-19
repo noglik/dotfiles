@@ -19,7 +19,7 @@ font:
     style: Italic
 
   # Point size
-  size: 13
+  size: 14.0
 
 # Colors (One Dark)
 colors:
@@ -51,3 +51,4 @@ colors:
     magenta: '#c678dd'
     cyan:    '#56b6c2'
     white:   '#ffffff'
+

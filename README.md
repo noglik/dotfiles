@@ -4,13 +4,14 @@ This is configurations for usefull applications
 
 ## Application list
 - zsh
-- p10k
 - nvim
 - alacritty
 - i3-gaps
 - polybar???
+- node/npm
 
-## Coc plugins
-Install this plugins with :CocInstall
-'coc-jsonc'
-'coc-tsserver'
+## Nvim lsp
+Install language servers:
+```
+npm install -g typescript typescript-language-server vscode-langservers-extracted vim-language-server
+```

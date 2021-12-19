@@ -18,6 +18,8 @@ Plug 'hrsh7th/vim-vsnip'
 
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope-file-browser.nvim'
+Plug 'kyazdani42/nvim-web-devicons'
 
 Plug 'christoomey/vim-tmux-navigator'
 
@@ -45,7 +47,7 @@ let mapleader=" " | let maplocalleader=";"
 " ================================
 " usefull mappings
 nmap <silent> <leader>rr :source $MYVIMRC<cr>
-nmap <silent> <leader>c :bd<cr>
+noremap <leader>c :bd<cr>
 nmap <c-c> :set hlsearch!<cr>
 noremap <leader>p "+p
 noremap <leader>y "+y
@@ -72,7 +74,6 @@ lua <<EOF
       },
       mappings = {
         i = {
-          ['<esc>'] = actions.close,
           ['<c-j>'] = actions.move_selection_next,
           ['<c-k>'] = actions.move_selection_previous,
           ['<tab>'] = actions.toggle_selection + actions.move_selection_next,
@@ -80,38 +81,51 @@ lua <<EOF
           ['<cr>'] = actions.select_default,
           ['<c-v>'] = actions.file_vsplit,
           ['<c-s>'] = actions.file_split,
-          ['<c-t>'] = actions.file_tab
+          ['<c-t>'] = actions.file_tab,
+          ['<c-?>'] = actions.which_key
         },
         n = {
           ['<esc>'] = actions.close,
           ['<tab>'] = actions.toggle_selection + actions.move_selection_next,
           ['<s-tab>'] = actions.toggle_selection + actions.move_selection_previous,
           ['<cr>'] = actions.select_default,
-          ['<c-v>'] = actions.file_vsplit,
-          ['<c-s>'] = actions.file_split,
-          ['<c-t>'] = actions.file_tab
+          ['<v>'] = actions.file_vsplit,
+          ['<s>'] = actions.file_split,
+          ['<t>'] = actions.file_tab,
+          ['<?>'] = actions.which_key,
         }
       }
     },
     pickers = {
       find_files = {
         find_command = {'rg', '--files', '--iglob', '!.git', '--hidden'}
+      },
+      buffers = {
+        sort_lastused = true,
+      }
+    },
+    extensions = {
+      file_browser = {
+        path = '%:p:h'
       }
     }
   }
+  require('telescope').load_extension('file_browser')
 
-  local keymap = {
-    ff = 'find_files',
-    fg = 'live_grep',
-    fb = 'buffers',
-    fs = 'git_status',
-    ft = 'file_browser',
-  }
   local opts = { noremap = true, silent = true }
-  for key, builtin in pairs(keymap) do
-    local command = '<cmd>lua require(\'telescope.builtin\').' .. builtin .. '()<cr>'
-    vim.api.nvim_set_keymap('n', '<leader>' .. key, command, opts)
+
+  function project_files()
+    local opts = {}
+    local ok = pcall(require('telescope.builtin').git_files, opts)
+    if not ok then require('telescope.builtin').find_files(opts) end
   end
+
+
+  vim.api.nvim_set_keymap("n", "<leader>ft",  "<cmd>lua require 'telescope'.extensions.file_browser.file_browser()<cr>", opts)
+  vim.api.nvim_set_keymap("n", "<leader>ff", "<cmd>lua project_files()<cr>", opts)
+  vim.api.nvim_set_keymap("n", "<leader><space>", "<cmd>lua require('telescope.builtin').buffers()<cr>", opts)
+  vim.api.nvim_set_keymap("n", "<leader>fg", "<cmd>lua require('telescope.builtin').live_grep()<cr>", opts)
+  vim.api.nvim_set_keymap("n", "<leader>fs", "<cmd>lua require('telescope.builtin').git_status()<cr>", opts)
 
 EOF
 
@@ -173,6 +187,9 @@ lua <<EOF
     buf_set_keymap('n', 'ga', '<cmd>lua require(\'telescope.builtin\').lsp_code_actions(require(\'telescope.themes\').get_cursor())<CR>', opts)
   end
 
+  vim.o.updatetime = 250
+  vim.cmd [[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]]
+
   vim.lsp.handlers['textDocument/publishDiagnostics'] =
     vim.lsp.with(
       vim.lsp.diagnostic.on_publish_diagnostics,
@@ -184,6 +201,7 @@ lua <<EOF
           },
           signs = false,
           update_in_insert = true,
+          severity_sort = true
       }
     )
 
@@ -193,7 +211,7 @@ lua <<EOF
     vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
   end
 
-  local servers = { 'tsserver', 'eslint', 'vimls' }
+  local servers = { 'tsserver', 'eslint', 'vimls', 'jsonls' }
   for _, lsp in ipairs(servers) do
     nvim_lsp[lsp].setup {
       on_attach = on_attach,
@@ -219,5 +237,4 @@ require'nvim-treesitter.configs'.setup {
   },
 }
 EOF
-" ================================
-
+" ================================a

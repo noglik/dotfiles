@@ -16,8 +16,8 @@ Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/cmp-vsnip'
 Plug 'hrsh7th/vim-vsnip'
 
-Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope-ui-select.nvim'
 Plug 'nvim-telescope/telescope-file-browser.nvim'
 Plug 'kyazdani42/nvim-web-devicons'
 
@@ -54,9 +54,22 @@ noremap <leader>y "+y
 
 " ================================
 " One Dark color scheme
-let g:onedark_style = 'warmer'
-let g:onedark_transparent_background = v:true
-let g:onedark_italic_comment = v:true
+lua <<EOF
+  local one_dark = require('onedark')
+
+  one_dark.setup {
+    style = 'warmer',
+    transparent = true,
+    code_style = {
+      comments = 'italic',
+    },
+    diagnostics = {
+      undercurl = true
+    }
+  }
+
+  one_dark.load()
+EOF
 colorscheme onedark
 
 " ================================
@@ -76,8 +89,6 @@ lua <<EOF
         i = {
           ['<c-j>'] = actions.move_selection_next,
           ['<c-k>'] = actions.move_selection_previous,
-          ['<tab>'] = actions.toggle_selection + actions.move_selection_next,
-          ['<s-tab>'] = actions.toggle_selection + actions.move_selection_previous,
           ['<cr>'] = actions.select_default,
           ['<c-v>'] = actions.file_vsplit,
           ['<c-s>'] = actions.file_split,
@@ -86,8 +97,6 @@ lua <<EOF
         },
         n = {
           ['<esc>'] = actions.close,
-          ['<tab>'] = actions.toggle_selection + actions.move_selection_next,
-          ['<s-tab>'] = actions.toggle_selection + actions.move_selection_previous,
           ['<cr>'] = actions.select_default,
           ['<v>'] = actions.file_vsplit,
           ['<s>'] = actions.file_split,
@@ -107,10 +116,15 @@ lua <<EOF
     extensions = {
       file_browser = {
         path = '%:p:h'
-      }
+      },
+      ["ui-select"] = {
+        require("telescope.themes").get_dropdown {}
+     }
     }
   }
+
   require('telescope').load_extension('file_browser')
+  require('telescope').load_extension('ui-select')
 
   local opts = { noremap = true, silent = true }
 
@@ -121,7 +135,7 @@ lua <<EOF
   end
 
 
-  vim.api.nvim_set_keymap("n", "<leader>ft",  "<cmd>lua require 'telescope'.extensions.file_browser.file_browser()<cr>", opts)
+  vim.api.nvim_set_keymap("n", "<leader>ft",  "<cmd>lua require('telescope').extensions.file_browser.file_browser()<cr>", opts)
   vim.api.nvim_set_keymap("n", "<leader>ff", "<cmd>lua project_files()<cr>", opts)
   vim.api.nvim_set_keymap("n", "<leader><space>", "<cmd>lua require('telescope.builtin').buffers()<cr>", opts)
   vim.api.nvim_set_keymap("n", "<leader>fg", "<cmd>lua require('telescope.builtin').live_grep()<cr>", opts)
@@ -173,8 +187,7 @@ lua <<EOF
       }
     )
   })
-  
-  local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+
   
   local on_attach = function(client, bufnr)
     local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
@@ -184,7 +197,8 @@ lua <<EOF
     buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
     buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
     buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-    buf_set_keymap('n', 'ga', '<cmd>lua require(\'telescope.builtin\').lsp_code_actions(require(\'telescope.themes\').get_cursor())<CR>', opts)
+    buf_set_keymap('n', 'ga', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+    buf_set_keymap('n', 'gf', '<cmd>lua vim.lsp.buf.format()<CR>', opts)
   end
 
   vim.o.updatetime = 250
@@ -211,11 +225,10 @@ lua <<EOF
     vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
   end
 
-  local servers = { 'tsserver', 'eslint', 'vimls', 'jsonls' }
+  local servers = { 'tsserver', 'eslint', 'vimls', 'jsonls', 'rust_analyzer', 'gopls' }
   for _, lsp in ipairs(servers) do
     nvim_lsp[lsp].setup {
       on_attach = on_attach,
-      capabilities = capabilities,
       flags = {
         debounce_text_changes = 150,
       }
@@ -227,7 +240,7 @@ EOF
 " treesitter module configuration
 lua <<EOF
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = {"vim", "lua", "typescript"}, -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+  ensure_installed = {'vim', 'lua', 'typescript', 'rust'}, -- one of "all", "maintained" (parsers with maintainers), or a list of languages
   sync_install = false, -- install languages synchronously (only applied to `ensure_installed`)
   ignore_install = {  }, -- List of parsers to ignore installing
   highlight = {

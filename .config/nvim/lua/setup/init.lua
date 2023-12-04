@@ -1,0 +1,5 @@
+require('setup.plugin_manager')
+require('setup.remap')
+require('setup.general')
+require('setup.colorscheme')
+require('setup.plugins')

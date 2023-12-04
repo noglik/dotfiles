@@ -7,7 +7,7 @@ cp ~/.config/alacritty/alacritty.yml ./.config/alacritty/
 cp ~/.config/i3/* ./.config/i3/
 
 # copy nvim config
-cp ~/.config/nvim/init.vim ./.config/nvim/
+cp -r ~/.config/nvim/* ./.config/nvim/
 
 # copy tmux config
 cp ~/.tmux.conf ./

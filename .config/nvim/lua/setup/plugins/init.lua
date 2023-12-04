@@ -1,0 +1,6 @@
+require('setup.plugins.telescope')
+-- require('setup.plugins.mason')
+require('setup.plugins.lsp')
+require('setup.plugins.cmp')
+require('setup.plugins.gitsigns')
+-- require('setup.plugins.dap')
